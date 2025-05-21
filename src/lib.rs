@@ -1,10 +1,11 @@
 #![warn(clippy::all, rust_2018_idioms)]
 
 mod app;
-use std::ffi::{CString, NulError};
 
 pub use app::MyApp;
-use rust_icu_sys::{UCharNameChoice, UErrorCode, u_charName_74};
+
+use rust_icu_sys::{UCharNameChoice, UErrorCode, versioned_function};
+use std::ffi::{CString, NulError};
 
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
@@ -27,7 +28,7 @@ fn get_name(c: char, extended: bool) -> Result<String, Error> {
     let mut buffer: [u8; 1024] = [0; 1024];
     let mut error_code = UErrorCode::U_ZERO_ERROR;
     let len = unsafe {
-        u_charName_74(
+        versioned_function!(u_charName)(
             c as i32,
             if extended {
                 UCharNameChoice::U_EXTENDED_CHAR_NAME
