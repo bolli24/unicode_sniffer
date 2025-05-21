@@ -4,7 +4,16 @@
 // When compiling natively:
 #[cfg(not(target_family = "wasm"))]
 fn main() -> eframe::Result {
+    use std::{path::PathBuf, str::FromStr};
+
     env_logger::init(); // Log to stderr (if you run with `RUST_LOG=debug`).
+
+    let args: Vec<String> = std::env::args().collect();
+
+    let text = args.get(2).map(|arg| {
+        let path = PathBuf::from(arg);
+        std::fs::read_to_string(path).unwrap_or(arg.to_owned())
+    });
 
     let native_options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
@@ -20,7 +29,7 @@ fn main() -> eframe::Result {
     eframe::run_native(
         "eframe template",
         native_options,
-        Box::new(|cc| Ok(Box::new(unicode_sniffer::MyApp::new(cc)))),
+        Box::new(|cc| Ok(Box::new(unicode_sniffer::MyApp::new(cc, text)))),
     )
 }
 

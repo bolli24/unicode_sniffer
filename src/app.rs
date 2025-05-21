@@ -16,8 +16,10 @@ impl Default for MyApp {
 }
 
 impl MyApp {
-    pub fn new(_cc: &eframe::CreationContext<'_>) -> Self {
-        Default::default()
+    pub fn new(_cc: &eframe::CreationContext<'_>, text: Option<String>) -> Self {
+        Self {
+            text: text.unwrap_or(Self::default().text),
+        }
     }
 }
 
