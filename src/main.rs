@@ -4,15 +4,27 @@
 // When compiling natively:
 #[cfg(not(target_family = "wasm"))]
 fn main() -> eframe::Result {
+    use log::error;
     use std::path::PathBuf;
+    use unicode_sniffer::MAX_FILE_SIZE;
 
     env_logger::init(); // Log to stderr (if you run with `RUST_LOG=debug`).
 
     let args: Vec<String> = std::env::args().collect();
 
-    let text = args.get(1).map(|arg| {
+    let text = args.get(1).and_then(|arg| {
         let path = PathBuf::from(arg);
-        std::fs::read_to_string(path).unwrap_or(arg.to_owned())
+        let text = std::fs::read_to_string(&path).unwrap_or(arg.to_owned());
+        if text.len() > MAX_FILE_SIZE {
+            error!(
+                "File '{}' is to big ({} bytes). Max is 1KiB.",
+                path.display(),
+                text.len()
+            );
+            None
+        } else {
+            Some(text)
+        }
     });
 
     let native_options = eframe::NativeOptions {

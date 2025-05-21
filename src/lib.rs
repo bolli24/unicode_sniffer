@@ -7,6 +7,8 @@ pub use app::MyApp;
 use rust_icu_sys::{UCharNameChoice, UErrorCode, versioned_function};
 use std::ffi::{CString, NulError};
 
+pub const MAX_FILE_SIZE: usize = 1_024;
+
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
     #[error("Error calling ICU function: {0}")]

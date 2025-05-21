@@ -1,7 +1,7 @@
 use egui::Color32;
 use log::error;
 
-use crate::get_extended_unicode_name;
+use crate::{MAX_FILE_SIZE, get_extended_unicode_name};
 
 pub struct MyApp {
     text: String,
@@ -42,6 +42,13 @@ impl eframe::App for MyApp {
                             {
                                 let result = std::fs::read(&file);
                                 match result {
+                                    Ok(content) if content.len() > MAX_FILE_SIZE => {
+                                        error!(
+                                            "File '{}' is to big ({} bytes). Max is 1KiB.",
+                                            file.display(),
+                                            content.len()
+                                        )
+                                    }
                                     Ok(content) => {
                                         self.text = String::from_utf8_lossy(&content).to_string();
                                     }
