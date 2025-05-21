@@ -1,5 +1,7 @@
 use egui::Color32;
 
+use crate::get_extended_unicode_name;
+
 pub struct MyApp {
     text: String,
 }
@@ -27,10 +29,8 @@ impl eframe::App for MyApp {
         });
 
         egui::CentralPanel::default().show(ctx, |ui| {
-            ui.heading("eframe template");
-
             let output = ui
-                .horizontal(|ui| {
+                .vertical(|ui| {
                     ui.label("Input: ");
                     egui::TextEdit::multiline(&mut self.text).show(ui)
                 })
@@ -51,7 +51,7 @@ impl eframe::App for MyApp {
                         .unwrap_or(ui.ctx().style().visuals.text_color());
                     ui.colored_label(color, format!("{:X}", char as u32))
                         .on_hover_text(
-                            unicode_names2::name(char)
+                            get_extended_unicode_name(char)
                                 .map_or("NONAME".to_owned(), |name| name.to_string()),
                         );
                 }
