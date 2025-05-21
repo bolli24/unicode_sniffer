@@ -4,13 +4,13 @@
 // When compiling natively:
 #[cfg(not(target_family = "wasm"))]
 fn main() -> eframe::Result {
-    use std::{path::PathBuf, str::FromStr};
+    use std::path::PathBuf;
 
     env_logger::init(); // Log to stderr (if you run with `RUST_LOG=debug`).
 
     let args: Vec<String> = std::env::args().collect();
 
-    let text = args.get(2).map(|arg| {
+    let text = args.get(1).map(|arg| {
         let path = PathBuf::from(arg);
         std::fs::read_to_string(path).unwrap_or(arg.to_owned())
     });
