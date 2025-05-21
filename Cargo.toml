@@ -18,6 +18,7 @@ eframe = { version = "0.31", default-features = false, features = [
     "wayland",       # To support Linux (and CI)
     "x11",           # To support older Linux distributions (restores one of the default features)
 ] }
+rfd = "0.15"
 log = "0.4"
 
 thiserror = "2.0"

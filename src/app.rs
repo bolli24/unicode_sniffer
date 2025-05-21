@@ -1,4 +1,5 @@
 use egui::Color32;
+use log::error;
 
 use crate::get_extended_unicode_name;
 
@@ -31,14 +32,31 @@ impl eframe::App for MyApp {
         egui::CentralPanel::default().show(ctx, |ui| {
             let output = ui
                 .vertical(|ui| {
-                    ui.label("Input: ");
+                    ui.horizontal(|ui| {
+                        ui.label("Input: ");
+                        if ui.button("Load file").clicked() {
+                            if let Some(file) =
+                                rfd::FileDialog::new().set_directory("~").pick_file()
+                            {
+                                let result = std::fs::read(&file);
+                                match result {
+                                    Ok(content) => {
+                                        self.text = String::from_utf8_lossy(&content).to_string();
+                                    }
+                                    Err(err) => {
+                                        error!("Error reading file '{}': {}", file.display(), err)
+                                    }
+                                }
+                            }
+                        }
+                    });
                     egui::TextEdit::multiline(&mut self.text).show(ui)
                 })
                 .inner;
 
             let cursor_range = output.cursor_range.map(|c| c.as_ccursor_range().sorted());
 
-            ui.horizontal(|ui| {
+            ui.horizontal_wrapped(|ui| {
                 for (i, char) in self.text.chars().enumerate() {
                     let color = cursor_range
                         .and_then(|range| {
@@ -49,11 +67,16 @@ impl eframe::App for MyApp {
                             }
                         })
                         .unwrap_or(ui.ctx().style().visuals.text_color());
-                    ui.colored_label(color, format!("{:X}", char as u32))
+                    let label = ui
+                        .colored_label(color, format!("{:X}", char as u32))
                         .on_hover_text(
                             get_extended_unicode_name(char)
                                 .map_or("NONAME".to_owned(), |name| name.to_string()),
                         );
+
+                    if !char.is_ascii() {
+                        label.highlight();
+                    }
                 }
             });
 
