@@ -3,7 +3,8 @@
 
 // When compiling natively:
 #[cfg(not(target_family = "wasm"))]
-fn main() -> eframe::Result {
+#[tokio::main]
+async fn main() -> eframe::Result {
     use log::error;
     use std::path::PathBuf;
     use unicode_sniffer::MAX_FILE_SIZE;
@@ -66,7 +67,7 @@ fn main() {
             .start(
                 canvas,
                 web_options,
-                Box::new(|cc| Ok(Box::new(unicode_sniffer::MyApp::new(cc)))),
+                Box::new(|cc| Ok(Box::new(unicode_sniffer::MyApp::new(cc, None)))),
             )
             .await;
 

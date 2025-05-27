@@ -4,10 +4,21 @@ mod app;
 
 pub use app::MyApp;
 
-use rust_icu_sys::{UCharNameChoice, UErrorCode, versioned_function};
-use std::ffi::{CString, NulError};
-
 pub const MAX_FILE_SIZE: usize = 1_024;
+
+#[macro_export]
+macro_rules! spawn_task {
+    ($closure:expr) => {{
+        #[cfg(not(target_arch = "wasm32"))]
+        tokio::spawn($closure);
+
+        #[cfg(target_arch = "wasm32")]
+        wasm_bindgen_futures::spawn_local($closure);
+    }};
+}
+
+/* use rust_icu_sys::{UCharNameChoice, UErrorCode, versioned_function};
+use std::ffi::{CString, NulError};
 
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
@@ -66,4 +77,4 @@ mod test {
         let string = get_unicode_name('\n').unwrap();
         println!("{string}");
     }
-}
+} */
