@@ -18,9 +18,10 @@ async fn main() -> eframe::Result {
         let text = std::fs::read_to_string(&path).unwrap_or(arg.to_owned());
         if text.len() > MAX_FILE_SIZE {
             error!(
-                "File '{}' is to big ({} bytes). Max is 1KiB.",
+                "File '{}' is to big ({} bytes). Max is {}KiB.",
                 path.display(),
-                text.len()
+                text.len(),
+                MAX_FILE_SIZE / 1_024
             );
             None
         } else {

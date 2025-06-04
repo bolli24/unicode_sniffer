@@ -53,9 +53,10 @@ impl eframe::App for MyApp {
                                 let content = file.read().await;
                                 if content.len() > MAX_FILE_SIZE {
                                     error!(
-                                        "File '{}' is to big ({} bytes). Max is 1KiB.",
+                                        "File '{}' is to big ({} bytes). Max is {}KiB.",
                                         file.file_name(),
-                                        content.len()
+                                        content.len(),
+                                        MAX_FILE_SIZE / 1_024
                                     )
                                 } else if let Err(err) = text_sender
                                     .send(String::from_utf8_lossy(&content).to_string())

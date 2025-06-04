@@ -4,7 +4,7 @@ mod app;
 
 pub use app::MyApp;
 
-pub const MAX_FILE_SIZE: usize = 1_024;
+pub const MAX_FILE_SIZE: usize = 10 * 1_024;
 
 #[macro_export]
 macro_rules! spawn_task {
